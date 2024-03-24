@@ -24,8 +24,39 @@
 # player = vlc.MediaPlayer("speech.mp3")
 # player.play()
 
-from gtts import gTTS
-import os
+
+
+# from gtts import gTTS
+# import os
+
+# from elevenlabs import play
+# from elevenlabs.client import ElevenLabs
+
+# ELEVEN_LABS_KEY = os.getenv('ELEVEN_LABS_KEY')
+
+# client = ElevenLabs(
+#   api_key=ELEVEN_LABS_KEY, # Defaults to ELEVEN_API_KEY
+# )
+
+# from elevenlabs.client import ElevenLabs
+
+# client = ElevenLabs(
+#   api_key="YOUR_API_KEY", # Defaults to ELEVEN_API_KEY
+# )
+
+# response = client.voices.get_all()
+# audio = client.generate(text="Hello there!", voice=response.voices[0])
+# print(voices)
+
+
+
+# audio = client.generate(
+#   text="Hello! 你好! Hola! नमस्ते! Bonjour! こんにちは! مرحبا! 안녕하세요! Ciao! Cześć! Привіт! வணக்கம்!",
+#   voice="Rachel",
+#   model="eleven_multilingual_v2"
+# )
+# play(audio)
+
 
 def text_to_wizard_voice(text, output_file="savedInfo\wizard_voice.mp3"):
     # Initialize gTTS object
