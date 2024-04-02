@@ -30,6 +30,10 @@ def process(info):
         else:
             print("Narrator")
             narrator(line)
+    no_gender = info.replace("Male Voice:","")
+    no_gender = info.replace("Female Voice:","")
+    no_gender = info.replace("Narrator Voice:","")
+    return no_gender
 def male(info):
     response = client.audio.speech.create(
     model="tts-1",
