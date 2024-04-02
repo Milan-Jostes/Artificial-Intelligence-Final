@@ -14,11 +14,11 @@ num = 1
 
 
 def process(info):
-    print(info)
+    #print(info)
     lines = info.splitlines()
-    print(lines)
+    #print(lines)
     for line in lines:
-        print(line)
+        #print(line)
         if len(line)<=1:
             continue
         if "Female Voice:" in line:
