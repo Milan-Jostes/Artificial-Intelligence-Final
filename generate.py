@@ -81,8 +81,8 @@ def index():
 
 @app.route("/get")
 def get_bot_response():
-    #prompt = request.args.get('msg')
-    #answer = createScene(prompt)
+    prompt = request.args.get('msg')
+    answer = createScene(prompt)
     answer = "blah blah blah"
     return str(answer)
     # issue_prompt = (f"You are a online service chatbot. Be courteous and explain a solution to the following problem: "
