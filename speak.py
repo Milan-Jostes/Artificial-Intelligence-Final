@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 key = os.getenv('OPEN_AI_KEY')
 client = OpenAI(api_key=key)
-speech_file = "savedInfo\speech"
+speech_file = "static\Voices\speech"
 num = 1
 # Load the environment variables from .env file
 

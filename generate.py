@@ -70,9 +70,9 @@ def createImage(prompt):
     #print(image)
     image_url = image.data[0].url
     response = requests.get(image_url)
-    with open('/savedInfo/image.png', 'wb') as f:
+    with open('static\Image\image.png', 'wb') as f:
         f.write(response.content)
-    img = Image.open('/savedInfo/image.png')
+    img = Image.open('static\Image\image.png')
     img.show()
 
 @app.route("/")
