@@ -22,12 +22,16 @@ def process(info):
         if len(line)<=1:
             continue
         if "Female Voice:" in line:
+            
+            line = line.replace("Female Voice:","")
             print("Woman")
             female(line)
         elif "Male Voice:" in line:
+            line = line.replace("Male Voice:","")
             print("Male")
             male(line)
         else:
+            line = line.replace("Narrator Voice:","")
             print("Narrator")
             narrator(line)
     no_gender = info.replace("Male Voice:","")

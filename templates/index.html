@@ -42,6 +42,8 @@
             <div class="panel-body" id="chat">
                 <ul class="list-group">
                     <li class='list-group-item'><b>Game Master: Please input your Character Name, Class, and a short description of who your character is, and where they are headed.</b></li>
+                    <li class='list-group-item'><b>Scene:</b> <img src="{{url_for('static', filename='/Image/image.png')}}"></li>
+                    <li class='list-group-item'><audio controls autoplay><source src="{{url_for('static', filename='/Voices/speech1.mp3')}}" type='audio/mpeg'></audio></li>
                 </ul>
             </div>
         </div>
@@ -58,7 +60,8 @@
             var userInput = $("#userInput").val();
             $.get("/get?msg=" + userInput, function(data){
                 $("#chat").append("<li class='list-group-item'><b>You:</b> " + userInput + "</li>");
-                $("#chat").append("<li class='list-group-item'><b>Game Master:</b> " + data + "</li>");
+                $("#chat").append("<li class='list-group-item'><b>Scene:</b> <img src='{{url_for('static', filename='/Image/image.png')}}'></li>");
+                $("#chat").append("<li class='list-group-item'><audio controls autoplay><source src='{{url_for('static', filename='/Voices/speech1.mp3')}}' type='audio/mpeg'></audio></li>");
             });
         });
     </script>
