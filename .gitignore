@@ -1,3 +1,4 @@
 savedInfo/*
 static/Voices/*
-static/Images/*
+static/Image/*
+!static/Image/image1.png
