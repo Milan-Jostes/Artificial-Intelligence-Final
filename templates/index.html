@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dungeons and DrAIgons</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #35372D;
+            color: #ededf2;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        #chat {
+            height: 66.67vh;
+            overflow-y: scroll;
+            background-color: #444654;
+        }
+        .list-group-item {
+            border-radius: 5px;
+            background-color: #444654;
+        }
+        .submit {
+            background-color:#21232e;
+            color: white;
+            border-radius: 5px;
+        }
+        .input-group input {
+            background-color: #444654;
+            color: #ededf2;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Dungeons and DrAIgons</h2>
+        <hr>
+        <div class="panel panel-default">
+            <div class="panel-heading">Message Log</div>
+            <div class="panel-body" id="chat">
+                <ul class="list-group">
+                    <li class='list-group-item'><b>Game Master: Please input your Character Name, Class, and a short description of who your character is, and where they are headed.</b></li>
+                    <!-- <li class='list-group-item'><b>Scene:</b> <img src="{{url_for('static', filename='/Image/image.png')}}"></li> -->
+                    <!-- <li class='list-group-item'><audio controls autoplay><source src="{{url_for('static', filename='/Voices/speech1.mp3')}}" type='audio/mpeg'></audio></li> -->
+                </ul>
+            </div>
+        </div>
+        <div class="input-group">
+            <input type="text" id="userInput" class="form-control" placeholder="Describe what you do in first person">
+            <span class="input-group-btn">
+                <button class="btn btn-default" id="submit">Submit</button>
+            </span>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        var counter = 0;
+        $("#submit").click(function(){
+            counter++;
+            var userInput = $("#userInput").val();
+            $.get("/get?msg=" + userInput, function(data){
+                var timestamp = new Date().getTime();
+                var pathName= '/static/Image/image' + counter + '.png?t=' + timestamp;
+                $("#chat").append("<li class='list-group-item'><b>You:</b> " + userInput + "</li>");
+                $("#chat").append("<li class='list-group-item'><b>Scene:</b> <img src='" + pathName + "'></li>");
+                $("#chat").append("<li class='list-group-item'><audio controls autoplay><source src='/static/Voices/output.mp3' type='audio/mpeg'></audio></li>");
+            });
+        });
+    </script>
+</body>
+</html>
