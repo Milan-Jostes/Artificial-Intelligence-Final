@@ -2,6 +2,7 @@ from openai import OpenAI
 #import vlc
 import os
 from dotenv import load_dotenv
+import stitch
 
 load_dotenv()
 key = os.getenv('OPEN_AI_KEY')
@@ -15,6 +16,15 @@ num = 1
 
 def process(info):
     #print(info)
+    global num
+    num = 1
+    folder_path = 'static/Voices'
+    # Get a list of all the audio files in the folder
+    audio_files = [file for file in os.listdir(folder_path) if (file.endswith('.mp3') and file.startswith('speech'))]
+    for file in audio_files:
+        path_find = os.path.join(folder_path, file)
+        os.remove(path_find)
+
     lines = info.splitlines()
     #print(lines)
     for line in lines:
@@ -22,7 +32,7 @@ def process(info):
         if len(line)<=1:
             continue
         if "Female Voice:" in line:
-            
+
             line = line.replace("Female Voice:","")
             print("Woman")
             female(line)
@@ -37,6 +47,7 @@ def process(info):
     no_gender = info.replace("Male Voice:","")
     no_gender = info.replace("Female Voice:","")
     no_gender = info.replace("Narrator Voice:","")
+    stitch.stitch()
     return no_gender
 def male(info):
     response = client.audio.speech.create(

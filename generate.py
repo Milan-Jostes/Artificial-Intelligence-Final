@@ -12,9 +12,11 @@ key = os.getenv('OPEN_AI_KEY')
 client = OpenAI(api_key=key)
 
 app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 UPLOAD_FOLDER = 'C:/Users/mjostes/Documents/GitHub/ChatGPT-Final/savedInfo'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
+global img_num
+img_num = 0
 def createScene(prompt):
     responseScene = client.chat.completions.create(
     model="gpt-3.5-turbo",
@@ -42,6 +44,7 @@ def createScene(prompt):
 
 
 def createImage(prompt):
+
     responseImage = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
@@ -70,10 +73,12 @@ def createImage(prompt):
     #print(image)
     image_url = image.data[0].url
     response = requests.get(image_url)
-    with open('static\Image\image.png', 'wb') as f:
+    global img_num
+    img_num+=1
+    with open('static\Image\image'+str(img_num)+'.png', 'wb') as f:
         f.write(response.content)
-    img = Image.open('static\Image\image.png')
-    img.show()
+    #img = Image.open('static\Image\image.png')
+    #img.show()
 
 @app.route("/")
 def index():
@@ -83,7 +88,7 @@ def index():
 def get_bot_response():
     prompt = request.args.get('msg')
     answer = createScene(prompt)
-    answer = "blah blah blah"
+    #answer = "blah blah blah"
     return str(answer)
     # issue_prompt = (f"You are a online service chatbot. Be courteous and explain a solution to the following problem: "
     #               f"\n\n{userText}")

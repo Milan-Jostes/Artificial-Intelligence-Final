@@ -12,7 +12,7 @@
             margin-top: 20px;
         }
         #chat {
-            height: 400px;
+            height: 66.67vh;
             overflow-y: scroll;
             background-color: #444654;
         }
@@ -56,12 +56,16 @@
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script>
+        var counter = 0;
         $("#submit").click(function(){
+            counter++;
             var userInput = $("#userInput").val();
             $.get("/get?msg=" + userInput, function(data){
+                var timestamp = new Date().getTime();
+                var pathName= '/static/Image/image' + counter + '.png?t=' + timestamp;
                 $("#chat").append("<li class='list-group-item'><b>You:</b> " + userInput + "</li>");
-                $("#chat").append("<li class='list-group-item'><b>Scene:</b> <img src='{{url_for('static', filename='/Image/image.png')}}'></li>");
-                $("#chat").append("<li class='list-group-item'><audio controls autoplay><source src='{{url_for('static', filename='/Voices/speech1.mp3')}}' type='audio/mpeg'></audio></li>");
+                $("#chat").append("<li class='list-group-item'><b>Scene:</b> <img src='" + pathName + "'></li>");
+                $("#chat").append("<li class='list-group-item'><audio controls autoplay><source src='/static/Voices/output.mp3' type='audio/mpeg'></audio></li>");
             });
         });
     </script>
