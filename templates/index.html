@@ -5,7 +5,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #35372D;
+            background-color: rgb(43, 42, 42);
+            background-size: cover;
+            background-position: center;
             color: #ededf2;
         }
         .container {
@@ -27,15 +29,26 @@
         }
         .input-group input {
             background-color: #444654;
-            color: #ededf2;
+            color: #888888;
             border: none;
+        }
+        h2 {
+            background-image: url("https://www.boardgamer.ie/cdn/shop/articles/dnd_banner_top_1200x1200.jpg?v=1631081332");
+            max-height: 200px;
+            height: 100vh;
+            width: 100%;
+            background-position: center;
+        }
+        panel-heading {
+            background-color: #8a8a8a;
+            color: #000000;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h2>Dungeons and DrAIgons</h2>
+        <h2></h2>
         <hr>
         <div class="panel panel-default">
             <div class="panel-heading">Message Log</div>
@@ -63,9 +76,10 @@
             $.get("/get?msg=" + userInput, function(data){
                 var timestamp = new Date().getTime();
                 var pathName= '/static/Image/image' + counter + '.png?t=' + timestamp;
+                var pathNameVoice= '/static/Voices/output.mp3?t=' + timestamp;
                 $("#chat").append("<li class='list-group-item'><b>You:</b> " + userInput + "</li>");
                 $("#chat").append("<li class='list-group-item'><b>Scene:</b> <img src='" + pathName + "'></li>");
-                $("#chat").append("<li class='list-group-item'><audio controls autoplay><source src='/static/Voices/output.mp3' type='audio/mpeg'></audio></li>");
+                $("#chat").append("<li class='list-group-item'><audio controls autoplay><source src='"+pathNameVoice+"' type='audio/mpeg'></audio></li>");
             });
         });
     </script>
