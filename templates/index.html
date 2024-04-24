@@ -43,6 +43,12 @@
             background-color: #8a8a8a;
             color: #000000;
         }
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
     </style>
 </head>
 
@@ -55,8 +61,6 @@
             <div class="panel-body" id="chat">
                 <ul class="list-group">
                     <li class='list-group-item'><b>Game Master: Please input your Character Name, Class, and a short description of who your character is, and where they are headed.</b></li>
-                    <!-- <li class='list-group-item'><b>Scene:</b> <img src="{{url_for('static', filename='/Image/image.png')}}"></li> -->
-                    <!-- <li class='list-group-item'><audio controls autoplay><source src="{{url_for('static', filename='/Voices/speech1.mp3')}}" type='audio/mpeg'></audio></li> -->
                 </ul>
             </div>
         </div>
@@ -67,19 +71,55 @@
             </span>
         </div>
     </div>
+
+                    <!-- <li class='list-group-item'><b>Scene:</b> <img src="{{url_for('static', filename='/Image/image.png')}}"></li> -->
+                    <!-- <li class='list-group-item'><audio controls autoplay><source src="{{url_for('static', filename='/Voices/speech1.mp3')}}" type='audio/mpeg'></audio></li> -->
+<!--
+    <div class="panel panel-default">
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#messages">Messages</a></li>
+            <li><a data-toggle="tab" href="#dice">Dice</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="messages" class="tab-pane fade in active">
+                <div class="panel-heading">Message Log</div>
+                <div class="panel-body" id="chat">
+                    <ul class="list-group">
+                        <li class='list-group-item'><b>Game Master: Please input your Character Name, Class, and a short description of who your character is, and where they are headed.</b></li>
+                </div>
+            </div>
+            <div id="dice" class="tab-pane fade">
+                <div class="panel-heading">Dice Log</div>
+                <div class="panel-body" id="diceChat">
+                    <ul class="list-group">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script>
         var counter = 0;
         $("#submit").click(function(){
             counter++;
-            var userInput = $("#userInput").val();
+            var userInput = $("#userInput").val();//encodeURIComponent($("#userInput").val());
+            userInput = userInput.replace("+", "%2B");
             $.get("/get?msg=" + userInput, function(data){
-                var timestamp = new Date().getTime();
-                var pathName= '/static/Image/image' + counter + '.png?t=' + timestamp;
-                var pathNameVoice= '/static/Voices/output.mp3?t=' + timestamp;
-                $("#chat").append("<li class='list-group-item'><b>You:</b> " + userInput + "</li>");
-                $("#chat").append("<li class='list-group-item'><b>Scene:</b> <img src='" + pathName + "'></li>");
-                $("#chat").append("<li class='list-group-item'><audio controls autoplay><source src='"+pathNameVoice+"' type='audio/mpeg'></audio></li>");
+                if (data.includes("Command Detected")) {
+                    data= data.replace("Command Detected: ", "");
+                    $("#chat").append("<li class='list-group-item'><b>Dice Roll:</b> " + data + "</li>");
+                    console.log(data);
+                    return;
+                }
+                else{
+                    var timestamp = new Date().getTime();
+                    var pathName= '/static/Image/image' + counter + '.png?t=' + timestamp;
+                    var pathNameVoice= '/static/Voices/output.mp3?t=' + timestamp;
+                    $("#chat").append("<li class='list-group-item'><b>You:</b> " + userInput + "</li>");
+                    $("#chat").append("<li class='list-group-item'><b></b> <img src='" + pathName + "' class='center'></li>");
+                    $("#chat").append("<li class='list-group-item'><audio controls autoplay><source src='"+pathNameVoice+"' type='audio/mpeg'></audio></li>");
+                }
             });
         });
     </script>

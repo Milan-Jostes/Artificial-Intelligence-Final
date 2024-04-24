@@ -1,0 +1,4 @@
+//Outputting first 10 fibonacci numbers
+say("0")
+for every value in 9:
+  say("Outputting " (value*(value+1)))
