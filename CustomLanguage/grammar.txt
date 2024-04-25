@@ -1,6 +1,11 @@
-expr  : term ((PLUS|MINUS) term)*
+expr  : KEYWORD:ADD IDENTIFIER EQ expr
+            : term ((PLUS|MINUS) term)*
 term  : factor ((MUL|DIV|POW|MOD|FLOOR|DICE) factor)*
 factor  : INT|FLOAT
         : (PLUS|MINUS) factor
         : LPAREN expr RPAREN
+       
 				: DICE factor
+
+atom 		: INT|FLOAT|IDENTIFIER
+				    : LPAREN expr RPAREN
