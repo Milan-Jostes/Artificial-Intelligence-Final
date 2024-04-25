@@ -25,7 +25,8 @@ TT_QUOTE    = 'QUOTE'
 KEYWORDS = [
         'ADD',
         'd'
-        'ROLL'
+        'ROLL',
+        'DICE'
 ]
 
 class Error:
@@ -110,9 +111,12 @@ class Token:
         if self.value: return f'{self.type}:{self.value}'
         return f'{self.type}'
 class Dice:
-    def __init__(self, name, value):
+    def __init__(self, name, value, weights):
         self.name_tok = name
-        self.value_node = value
+        self.values = []
+        for val in range(value):
+            for num in range(weights[x]):
+                self.values.append(val)
         self.pos_start = self.name_tok.pos_start
         self.pos_end = self.value_node.pos_end
 
@@ -137,7 +141,7 @@ class Lexer:
             # elif self.current_char in 'd':
             #     tokens.append(self.roll_dice())
             elif self.current_char in LETTER:
-                #print("Identify")
+                print("Identify")
                 tokens.append(self.make_identifier())
             elif self.current_char in DIGITS:
                 tokens.append(self.make_number())
@@ -366,11 +370,8 @@ class Parser:
         #     res.register_advancement()
         #     self.advance()
         #     return res.success(VarAccessNode(tok))
+        return self.bin_op(self.atom, (TT_IDENTIFIER, ), self.factor)
 
-        #print(tok.type)
-        return res.failure(InvalidSyntaxError(
-            tok.pos_start, tok.pos_end, "Factor: Expected int, float, or letter"
-        ))
 
     def atom(self):
         res = ParseResult()
@@ -384,6 +385,7 @@ class Parser:
         elif tok.type == TT_IDENTIFIER:
             res.register_advancement()
             self.advance()
+            print("Token",tok)
             return res.success(VarAccessNode(tok))
 
         elif tok.type == TT_LPAREN:
@@ -434,12 +436,12 @@ class Parser:
             if res.error: return res
             return res.success(VarAssignNode(var_name, expr))
         #return self.bin_op(self.term, (TT_PLUS, TT_MINUS))
-        node = res.register(self.bin_op(self.term, (TT_PLUS, TT_MINUS)))
+        node = res.register(self.bin_op(self.term, (TT_PLUS, TT_MINUS)))            # THIS IS THE ERROR POINT
         if res.error:
             print(self.current_tok.type)
             return res.failure(InvalidSyntaxError(
                 self.current_tok.pos_start, self.current_tok.pos_end,
-                "Expr: Expected int, float, identifier, '+', '-', or '('"
+                "Expr: Expected 'ADD': Expected int, float, identifier, '+', '-', or '('"
             ))
         return res.success(node)
 
