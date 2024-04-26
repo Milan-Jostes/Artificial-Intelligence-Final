@@ -5,6 +5,7 @@ from speak import *
 import requests
 from flask import Flask, render_template, request
 from CustomLanguage import basic_command
+from sys import *
 
 
 from PIL import Image
@@ -16,9 +17,18 @@ app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 UPLOAD_FOLDER = 'C:/Users/mjostes/Documents/GitHub/ChatGPT-Final/savedInfo'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
+helpMenu = "<br>Welcome to the .dice language. Here are the commands you can use:<br>!HELP - Brings up the help menu<br>!DICE name number:weight,number:weight(etc) - Adds a new dice of name with the weights provided<br>!ADD name = value - Create a variable that stores a value <br>!name - Rolls the specified dice<br>You can also do basic mathematics with the following operators: +, -, *, /, %, ^, | <br>!Prefab - shows all the basic dice<br>"
+prefabMenu = "<br>twenty, twelve, ten, eight, six, four, cursed(1-19), blessed(2-20), and lame(2-19)<br>"
 global img_num
 img_num = 0
+
+file = open("C:/Users/Milan/Desktop/Github/ChatGPT-Final/CustomLanguage/Custom Lang/DicePrefab.dice", "r")
+lines = file.readlines()
+for line in lines:
+    line = line.replace("\n","")
+    basic_command.run(line)
+
+
 def createScene(prompt):
     responseScene = client.chat.completions.create(
     model="gpt-3.5-turbo",
@@ -91,8 +101,14 @@ def get_bot_response():
     prompt = request.args.get('msg')
     print(prompt)
     if(prompt.startswith("!")):
+
         print("Command Detected")
         prompt = prompt[1:]
+        print(prompt)
+        if prompt.upper() == "HELP":
+            return str("Command Detected: "+helpMenu)
+        if prompt.upper() == "PREFAB":
+            return str("Command Detected: "+prefabMenu)
         print(prompt)
         resp = basic_command.run(prompt)
         print(resp)
