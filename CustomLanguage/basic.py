@@ -113,9 +113,10 @@ class Token:
         if self.value: return f'{self.type}:{self.value}'
         return f'{self.type}'
 class Dice:
-    def __init__(self, name, value, weights=[]):
-        weights = value
+    def __init__(self, name, value, weights):
+        #weights = value
         self.name_tok = name
+        #self.value = value
         self.value = []
         for val in range(len(value)):
             for num in range(weights[val]):
@@ -270,12 +271,12 @@ class VarAssignNode:
         self.pos_end = self.value_node.pos_end
 
 class DiceCreate:
-    def __init__(self, name_tok, value_node):
+    def __init__(self, name_tok, faces, weights):
         print("DiceCreate")
         self.name_tok = name_tok
-        self.value_node = value_node
-        self.num = self.value_node
-        self.weights = self.value_node
+        #self.value_node = value_node
+        self.faces = faces
+        self.weights = weights
 
 class LetterNode:
     def __init__(self,tok):
@@ -450,11 +451,13 @@ class Parser:
                 res.register_advancement()
                 self.advance()
             if self.current_tok.type == TT_EOF:
-                return res.success(num)
+                #print("Weight:",num,weights)
+                return res.success((num,weights))
             if self.current_tok.type == TT_COMMA:
                 res.register_advancement()
                 self.advance()
-        return res.success(num)
+        #print("Weight:",num,weights)
+        return res.success((num,weights))
 
     def expr(self):
         res = ParseResult()
@@ -492,9 +495,10 @@ class Parser:
             var_name = self.current_tok
             res.register_advancement()
             self.advance()
-            weights = res.register(self.weight())
+            values = res.register(self.weight())
             if res.error: return res
-            return res.success(DiceCreate(var_name, weights))
+            #print("Values:",values[0],values[1])
+            return res.success(DiceCreate(var_name, values[0], values[1]))
 
         if self.current_tok.matches(TT_KEYWORD, 'ROLL'):
             res.register_advancement()
@@ -678,11 +682,13 @@ class Interpreter:
         if res.error: return res
         context.symbol_table.set(var_name, value)
         return res.success(value)
+
     def visit_DiceCreate(self, node, context):
         res = RTResult()
         name = node.name_tok.value
-        value = node.num
-        dice = Dice(name, value)
+        faces = node.faces
+        weights = node.weights
+        dice = Dice(name, faces,weights)
         context.symbol_table.set(name, dice)
         return res.success(dice)
 
