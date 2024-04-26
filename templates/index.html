@@ -102,7 +102,6 @@
     <script>
         var counter = 0;
         $("#submit").click(function(){
-            counter++;
             var userInput = $("#userInput").val();//encodeURIComponent($("#userInput").val());
             userInput = userInput.replace("+", "%2B");
             $.get("/get?msg=" + userInput, function(data){
@@ -113,6 +112,7 @@
                     return;
                 }
                 else{
+                    counter++;
                     var timestamp = new Date().getTime();
                     var pathName= '/static/Image/image' + counter + '.png?t=' + timestamp;
                     var pathNameVoice= '/static/Voices/output.mp3?t=' + timestamp;
