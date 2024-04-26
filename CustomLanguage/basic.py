@@ -22,6 +22,8 @@ TT_FLOOR    = 'FLOOR'
 TT_DICE     = 'DICE'
 TT_EQ       = 'EQ'
 TT_QUOTE    = 'QUOTE'
+TT_COLON    = 'COLON'
+TT_COMMA    = 'COMMA'
 KEYWORDS = [
         'ADD',
         'd'
@@ -111,14 +113,20 @@ class Token:
         if self.value: return f'{self.type}:{self.value}'
         return f'{self.type}'
 class Dice:
-    def __init__(self, name, value, weights):
+    def __init__(self, name, value, weights=[]):
+        weights = value
         self.name_tok = name
-        self.values = []
-        for val in range(value):
-            for num in range(weights[x]):
-                self.values.append(val)
-        self.pos_start = self.name_tok.pos_start
-        self.pos_end = self.value_node.pos_end
+        self.value = []
+        for val in range(len(value)):
+            for num in range(weights[val]):
+                self.value.append(value[val])
+
+        #self.pos_start = self.name_tok.pos_start
+        #self.pos_end = self.value_node.pos_end
+    def as_normal(self):
+        return self.value
+    def roll(self):
+        return random.choice(self.values)
 
 class Lexer:
     def __init__(self, fn, text):
@@ -176,6 +184,12 @@ class Lexer:
                 self.advance()
             elif self.current_char == '|':
                 tokens.append(Token(TT_FLOOR,pos_start=self.pos))
+                self.advance()
+            elif self.current_char == ':':
+                tokens.append(Token(TT_COLON,pos_start=self.pos))
+                self.advance()
+            elif self.current_char == ',':
+                tokens.append(Token(TT_COMMA,pos_start=self.pos))
                 self.advance()
             else:
                 pos_start = self.pos.copy()
@@ -255,6 +269,13 @@ class VarAssignNode:
         self.pos_start = self.var_name_tok.pos_start
         self.pos_end = self.value_node.pos_end
 
+class DiceCreate:
+    def __init__(self, name_tok, value_node):
+        print("DiceCreate")
+        self.name_tok = name_tok
+        self.value_node = value_node
+        self.num = self.value_node
+        self.weights = self.value_node
 
 class LetterNode:
     def __init__(self,tok):
@@ -411,6 +432,30 @@ class Parser:
     def term(self):
         return self.bin_op(self.factor, (TT_MUL, TT_DIV,TT_POWER,TT_MOD,TT_FLOOR,TT_DICE))
 
+    def weight(self):
+        res = ParseResult()
+        num=[]
+        weights = []
+        while self.current_tok.type != TT_EOF:
+            print(self.current_tok.type)
+            if self.current_tok.type == TT_INT:
+                num.append(self.current_tok.value)
+                res.register_advancement()
+                self.advance()
+            if self.current_tok.type == TT_COLON:
+                res.register_advancement()
+                self.advance()
+            if self.current_tok.type == TT_INT:
+                weights.append(self.current_tok.value)
+                res.register_advancement()
+                self.advance()
+            if self.current_tok.type == TT_EOF:
+                return res.success(num)
+            if self.current_tok.type == TT_COMMA:
+                res.register_advancement()
+                self.advance()
+        return res.success(num)
+
     def expr(self):
         res = ParseResult()
         if self.current_tok.matches(TT_KEYWORD, 'ADD'):
@@ -436,6 +481,30 @@ class Parser:
             if res.error: return res
             return res.success(VarAssignNode(var_name, expr))
         #return self.bin_op(self.term, (TT_PLUS, TT_MINUS))
+        if self.current_tok.matches(TT_KEYWORD, 'DICE'):
+            res.register_advancement()
+            self.advance()
+            if self.current_tok.type != TT_IDENTIFIER:
+                return res.failure(InvalidSyntaxError(
+                    self.current_tok.pos_start, self.current_tok.pos_end,
+                    "Expected Identifier"
+                ))
+            var_name = self.current_tok
+            res.register_advancement()
+            self.advance()
+            weights = res.register(self.weight())
+            if res.error: return res
+            return res.success(DiceCreate(var_name, weights))
+
+        if self.current_tok.matches(TT_KEYWORD, 'ROLL'):
+            res.register_advancement()
+            self.advance()
+            if self.current_tok.type != TT_IDENTIFIER:
+                return res.failure(InvalidSyntaxError(
+                    self.current_tok.pos_start, self.current_tok.pos_end,
+                    "Expected Identifier"
+                ))
+            var_name = self.current_tok
         node = res.register(self.bin_op(self.term, (TT_PLUS, TT_MINUS)))            # THIS IS THE ERROR POINT
         if res.error:
             print(self.current_tok.type)
@@ -609,6 +678,13 @@ class Interpreter:
         if res.error: return res
         context.symbol_table.set(var_name, value)
         return res.success(value)
+    def visit_DiceCreate(self, node, context):
+        res = RTResult()
+        name = node.name_tok.value
+        value = node.num
+        dice = Dice(name, value)
+        context.symbol_table.set(name, dice)
+        return res.success(dice)
 
     def visit_NumberNode(self, node, context):
         return RTResult().success(Number(node.tok.value).set_context(context).set_pos(node.pos_start, node.pos_end))
