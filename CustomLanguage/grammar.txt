@@ -2,6 +2,7 @@ expr  : KEYWORD:ADD IDENTIFIER EQ expr
       : KEYWORD:DICE IDENTIFIER weight
       : KEYWORD:ROLL IDENTIFIER
       : term ((PLUS|MINUS) term)*
+      : KEYWORD:HELP
 
 weight  : term WEIGHT term ((COMMA) weight)*
 

@@ -127,7 +127,9 @@ class Dice:
     def as_normal(self):
         return self.value
     def roll(self):
-        return random.choice(self.values)
+        return random.choice(self.value)
+    def copy(self):
+        return random.choice(self.value)
 
 class Lexer:
     def __init__(self, fn, text):
@@ -672,6 +674,8 @@ class Interpreter:
         value = context.symbol_table.get(var_name)
         if not value:
             return res.failure(RTError(node.pos_start, node.pos_end, f"'{var_name}' is not defined", context))
+        if isinstance(value, Dice):
+            return value.roll()
         value = value.copy().set_pos(node.pos_start, node.pos_end)
         return res.success(value)
 
@@ -757,5 +761,6 @@ def run(fn, text):
     context = Context('<program>')
     context.symbol_table = global_symbol_table
     result = interpreter.visit(ast.node,context)
-
+    if isinstance(result, int):
+        return Number(result), None
     return result.value, result.error
