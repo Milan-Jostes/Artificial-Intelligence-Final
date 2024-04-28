@@ -2,3 +2,4 @@ savedInfo/*
 static/Voices/*
 static/Image/*
 !static/Image/image1.png
+__pycache__/*

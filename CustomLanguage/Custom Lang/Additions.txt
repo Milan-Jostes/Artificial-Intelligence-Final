@@ -1,0 +1,10 @@
+Help Menu:
+!command --How to run commands
+!DICE name num:weight,num:weight -- Creates dice with numbers and weights
+!name -- Rolls Dice
+!HELP -- should display information
+
+
+Things to add:
+Prefab dice should be immediately available
+Help Menu

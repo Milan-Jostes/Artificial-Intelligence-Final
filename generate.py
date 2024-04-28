@@ -4,6 +4,8 @@ from openai import OpenAI
 from speak import *
 import requests
 from flask import Flask, render_template, request
+from CustomLanguage import basic_command
+from sys import *
 
 
 from PIL import Image
@@ -15,15 +17,25 @@ app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 UPLOAD_FOLDER = 'C:/Users/mjostes/Documents/GitHub/ChatGPT-Final/savedInfo'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+helpMenu = "<br>Welcome to the .dice language. Here are the commands you can use:<br>!HELP - Brings up the help menu<br>!DICE name number:weight,number:weight(etc) - Adds a new dice of name with the weights provided<br>!ADD name = value - Create a variable that stores a value <br>!name - Rolls the specified dice<br>You can also do basic mathematics with the following operators: +, -, *, /, %, ^, | <br>!Prefab - shows all the basic dice<br>"
+prefabMenu = "<br>twenty, twelve, ten, eight, six, four, cursed(1-19), blessed(2-20), and lame(2-19)<br>"
 global img_num
 img_num = 0
+
+file = open("C:/Users/Milan/Desktop/Github/ChatGPT-Final/CustomLanguage/Custom Lang/DicePrefab.dice", "r")
+lines = file.readlines()
+for line in lines:
+    line = line.replace("\n","")
+    basic_command.run(line)
+
+
 def createScene(prompt):
     responseScene = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
     {
     "role": "system",
-    "content": "You are a DM for A Dungeons and Dragons game, you must speak as a wise wizard that is describing things in great detail as a user plays through your story. When a character speaks, before their text place either Male Voice: or Female Voice: depending on the gender of the character being portrayed. You may not portray the user's character, instead prompt the user to respond. Make sure to connect this to the previous scene."
+    "content": "You are a DM for A Dungeons and Dragons game, you must speak as a wise wizard that is describing things in great detail as a user plays through your story.When a character speaks, before their text place either Male Voice: or Female Voice: depending on the gender of the character being portrayed. You may not portray the user's character, instead prompt the user to respond. Make sure to connect this to the previous scene. When the user wants to do something that would require skill, ask for them to roll and use the result to determine the outcome. The success should be based on the difficulty of the task. The user will input a number between 1 and 20, The higher the number, the more successful they are at the task"
     },  {
     "role": "user",
     "content": prompt
@@ -87,9 +99,33 @@ def index():
 @app.route("/get")
 def get_bot_response():
     prompt = request.args.get('msg')
-    answer = createScene(prompt)
+    print(prompt)
+    if(prompt.startswith("!")):
+
+        print("Command Detected")
+        prompt = prompt[1:]
+        print(prompt)
+        if prompt.upper() == "HELP":
+            return str("Command Detected: "+helpMenu)
+        if prompt.upper() == "PREFAB":
+            return str("Command Detected: "+prefabMenu)
+        print(prompt)
+        resp = basic_command.run(prompt)
+        print(resp)
+        ret_str = "["
+        if type(resp) == list:
+            string_list = [str(element) for element in resp]
+            delimiter = ", "
+            ret_str += delimiter.join(string_list)
+        else:
+            ret_str += str(resp)
+        ret_str += "]"
+        return str("Command Detected: "+ret_str)
+        #return ("Command Detected",data)
+    else:
+        answer = createScene(prompt)
+        return str(answer)
     #answer = "blah blah blah"
-    return str(answer)
     # issue_prompt = (f"You are a online service chatbot. Be courteous and explain a solution to the following problem: "
     #               f"\n\n{userText}")
     # response = openai.chat.completions.create(

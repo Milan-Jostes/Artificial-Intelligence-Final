@@ -1,0 +1,14 @@
+expr  : KEYWORD:ADD IDENTIFIER EQ expr
+      : KEYWORD:DICE IDENTIFIER weight
+      : KEYWORD:ROLL IDENTIFIER
+      : term ((PLUS|MINUS) term)*
+      : KEYWORD:HELP
+
+weight  : term WEIGHT term ((COMMA) weight)*
+
+term  : factor ((MUL|DIV|POW|MOD|FLOOR|DICE) factor)*
+
+factor  : (PLUS|MINUS) factor
+
+atom 		: INT|FLOAT|IDENTIFIER
+				: LPAREN expr RPAREN
